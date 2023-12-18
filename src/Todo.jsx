@@ -1,11 +1,13 @@
 import "./Todo.css";
 import { useState } from "react";
 const Todo = (event) => {
-  const [task, setTask] = useState([]);
+  const [task, setTask] = useState([{task:"sample task", isDone: false}]);
   const [newTask, setnewTask] = useState("");
 
   function addTask() {
-    setTask([...task, newTask]);
+    setTask((prevtask)=>{
+        return [...prevtask, {task:newTask,isDone:false}]
+    });
     setnewTask("");
   }
 
@@ -15,6 +17,16 @@ const Todo = (event) => {
 
   function deleteHandler(index) {
     setTask(task.filter((_, idx) => idx !== index));
+  }
+  function doneHandler(index) {
+   setTask((prevTask)=>{
+        return prevTask.map((todo,idx)=>{
+           if(idx === index){
+            return {...todo, isDone: true};
+           }
+           return todo;
+        })
+   })
   }
 
   return (
@@ -38,20 +50,35 @@ const Todo = (event) => {
 
         <div className="second-div">
           <ul type="none">
+
+
             {task.map((ele, index) => {
+
               return (
+
                 <li key={index}>
-                  <span className="task">{ele}</span>
-                  <button className="btn" onClick={() => deleteHandler(index)}>
+                  <span className="task"       style={ele.isDone ? {textDecorationLine:"Line-through"} : {}}      >{ele.task}</span>
+                  <button className="btn" onClick={() => deleteHandler(index)}> 
                     Delete
-                  </button>
+                   </button>
+                   <button className="btn" onClick={() => doneHandler(index)}> 
+                    Done
+                   </button>
                 </li>
+
               );
-            })}
+                
+                })}
+
+
           </ul>
         </div>
+
+
+
       </div>
     </>
   );
 };
 export default Todo;
+
